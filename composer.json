@@ -1,0 +1,22 @@
+{
+    "name": "tolkam/psr14-dispatcher",
+    "description": "PSR-14 event dispatcher",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Tolkam\\PSR14\\": "src"
+        }
+    },
+    "require": {
+        "php": ">=7.4",
+        "psr/event-dispatcher": "^1.0",
+        "psr/container": "^1.0",
+        "tolkam/utils": "^1.0@dev"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
