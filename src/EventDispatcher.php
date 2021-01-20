@@ -3,6 +3,7 @@
 namespace Tolkam\PSR14;
 
 use Exception;
+use Generator;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
@@ -10,16 +11,30 @@ use Psr\EventDispatcher\StoppableEventInterface;
 class EventDispatcher implements EventDispatcherInterface
 {
     /**
-     * @var ListenerProviderInterface
+     * @var array|ListenerProviderInterface[]
      */
-    private ListenerProviderInterface $listenerProvider;
+    private array $providers = [];
+    
+    /**
+     * @param ListenerProviderInterface[] $providers
+     */
+    public function __construct(array $providers = [])
+    {
+        foreach ($providers as $provider) {
+            $this->addListenerProvider($provider);
+        }
+    }
     
     /**
      * @param ListenerProviderInterface $listenerProvider
+     *
+     * @return $this
      */
-    public function __construct(ListenerProviderInterface $listenerProvider)
+    public function addListenerProvider(ListenerProviderInterface $listenerProvider): self
     {
-        $this->listenerProvider = $listenerProvider;
+        $this->providers[] = $listenerProvider;
+        
+        return $this;
     }
     
     /**
@@ -33,13 +48,12 @@ class EventDispatcher implements EventDispatcherInterface
             return $event;
         }
         
-        foreach ($this->listenerProvider->getListenersForEvent($event) as $k => $listener) {
+        foreach ($this->getListenersForEvent($event) as $k => $listener) {
             if (!is_callable($listener)) {
                 throw new Exception(sprintf(
-                    'Listener for "%s" event provided by "%s" at index "'
+                    'Listener for "%s" event at index "'
                     . '%s" must be callable, %s given',
                     get_class($event),
-                    get_class($this->listenerProvider),
                     $k,
                     gettype($listener)
                 ));
@@ -53,5 +67,17 @@ class EventDispatcher implements EventDispatcherInterface
         }
         
         return $event;
+    }
+    
+    /**
+     * @param $event
+     *
+     * @return Generator
+     */
+    private function getListenersForEvent($event): Generator
+    {
+        foreach ($this->providers as $provider) {
+            yield from $provider->getListenersForEvent($event);
+        }
     }
 }
