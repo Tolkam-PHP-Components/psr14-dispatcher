@@ -12,11 +12,6 @@
         "php": ">=7.4",
         "psr/event-dispatcher": "^1.0",
         "psr/container": "^1.0",
-        "tolkam/utils": "^1.0@dev"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
+        "tolkam/utils": "^1.0"
     }
 }
