@@ -40,7 +40,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    public function dispatch(object $event)
+    public function dispatch(object $event): object
     {
         $stoppable = $event instanceof StoppableEventInterface;
         
